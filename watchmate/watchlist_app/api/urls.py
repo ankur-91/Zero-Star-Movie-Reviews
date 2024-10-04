@@ -1,7 +1,8 @@
 from django.urls import path, include
 # from watchlist_app.api.views import movie_list, movie_detail
 # from watchlist_app.api.views import MovieListAPIView, MovieDetailAPIView 
-from watchlist_app.api.views import WatchListAV, WatchListDetailAV, StreamPlatformListAV, StreamPlatformDetailAV, ReviewListAV, ReviewDetailAV 
+from watchlist_app.api.views import (WatchListAV, WatchListDetailAV, StreamPlatformListAV, StreamPlatformDetailAV, ReviewListAV, 
+                                     ReviewCreateAV,ReviewDetailAV) 
 urlpatterns = [
     path('watchlist/', WatchListAV.as_view(), name= 'watch-list'),
     path('watchlist/<int:pk>/', WatchListDetailAV.as_view(), name = 'watch-list-detail'),
@@ -11,8 +12,9 @@ urlpatterns = [
     # path('review/', ReviewListAV.as_view(), name= 'review-list'),
     # path('review/<int:pk>/', ReviewDetailAV.as_view(), name = 'review-detail'),
     
-    path('watchlist/<int:pk>/review/', ReviewListAV.as_view(), name= 'review-list'),
-    path('watchlist/review/<int:pk>/', ReviewDetailAV.as_view(), name = 'review-detail'),
+    path('watchlist/<int:pk>/review-create/', ReviewCreateAV.as_view(), name= 'review-create'),
+    path('watchlist/<int:pk>/review/', ReviewListAV.as_view(), name= 'review-list'), # To get the reviews of a particualr watchlist
+    path('watchlist/review/<int:pk>/', ReviewDetailAV.as_view(), name = 'review-detail'), # To access a particular review
     
     
     

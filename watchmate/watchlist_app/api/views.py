@@ -9,16 +9,45 @@ from watchlist_app.models import WatchList, StreamPlatform, Review
 from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 
 
+
+class ReviewCreateAV(generics.CreateAPIView):
+    
+    serializer_class = ReviewSerializer
+    
+    def perform_create(self, serializer):
+        pk = self.kwargs.get('pk')
+        watchlist = WatchList.objects.get(pk=pk)
+        
+        serializer.save(watchlist=watchlist)
+        
+        
+    
+
+"""
+Concrete View Classes - with custom queryset
+"""
+
+class ReviewListAV(generics.ListAPIView):
+    
+    # queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        watchlist = self.kwargs['pk']
+        return Review.objects.filter(watchlist=watchlist)
+
+"""
+Concrete View Classes - without custom queryset
+"""
+
+# class ReviewListAV(generics.ListCreateAPIView):
+    
+#     queryset = Review.objects.all()
+#     serializer_class = ReviewSerializer
+
 """
 Concrete View Classes  
 """
-
-class ReviewListAV(generics.ListCreateAPIView):
-    
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-
-
 class ReviewDetailAV(generics.RetrieveUpdateDestroyAPIView):
     
     queryset = Review.objects.all()
