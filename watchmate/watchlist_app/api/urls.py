@@ -3,10 +3,11 @@ from rest_framework.routers import DefaultRouter
 # from watchlist_app.api.views import movie_list, movie_detail
 # from watchlist_app.api.views import MovieListAPIView, MovieDetailAPIView 
 from watchlist_app.api.views import (WatchListAV, WatchListDetailAV, StreamPlatformListAV, StreamPlatformDetailAV, ReviewListAV, 
-                                     ReviewCreateAV,ReviewDetailAV, StreamPlatformViewSet) 
+                                     ReviewCreateAV,ReviewDetailAV, StreamPlatformModelViewSet) 
 
 router = DefaultRouter()
-router.register('stream',StreamPlatformViewSet, basename='streamplatform')
+router.register('stream',StreamPlatformModelViewSet, basename='streamplatform')
+# router.register('stream',StreamPlatformViewSet, basename='streamplatform')
 
 urlpatterns = [
     path('watchlist/', WatchListAV.as_view(), name= 'watch-list'),
