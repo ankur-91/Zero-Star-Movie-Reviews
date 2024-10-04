@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
+from rest_framework import generics
+from rest_framework import mixins
 
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
@@ -93,49 +95,87 @@ class StreamPlatformDetailAV(APIView):
         stream = StreamPlatform.objects.get(pk=pk)
         stream.delete()
         return Response('Platform is deleted', status=status.HTTP_204_NO_CONTENT)
+
+"""
+Generic class Views and Mixins  
+"""
+
+class ReviewListAV(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     
-class ReviewListAV(APIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
     
-    def get(self,request):
-        reviews = Review.objects.all()
-        serializer = ReviewSerializer(reviews, many=True)
-        
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer = ReviewSerializer(data=request.data) 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+    # ListModelMixin use get method
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    # CreateModelMixin used post method
+    def post(self,request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-class ReviewDetailAV(APIView):
+class ReviewDetailAV(mixins.RetrieveModelMixin, generics.GenericAPIView):
     
-    def get(self,request, pk):
-        try:
-            review = Review.objects.get(pk=pk)
-        except review.DoesNotExist:
-            return Response('The review does not exist', status=status.HTTP_404_NOT_FOUND)
-        serializer = ReviewSerializer(review)
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+
+"""
+ReviewListAV via API view
+"""
+# class ReviewListAV(APIView):
+    
+#     def get(self,request):
+#         reviews = Review.objects.all()
+#         serializer = ReviewSerializer(reviews, many=True)
         
-        return Response(serializer.data)
+#         return Response(serializer.data)
     
-    def put(self,request, pk):
-        review = Review.objects.get(pk=pk)
-        serializer = ReviewSerializer(review, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
+#     def post(self, request):
+#         serializer = ReviewSerializer(data=request.data) 
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors)
+
+
+
+"""
+ReviewDetailAV via API view
+"""
+# class ReviewDetailAV(APIView):
+    
+#     def get(self,request, pk):
+#         try:
+#             review = Review.objects.get(pk=pk)
+#         except review.DoesNotExist:
+#             return Response('The review does not exist', status=status.HTTP_404_NOT_FOUND)
+#         serializer = ReviewSerializer(review)
         
-    def delete(self,request, pk):
-        review = Review.obejcts.get(pk=pk)
-        review.delete()
-        return Response("The review has been deleted", status=status.HTTP_204_NO_CONTENT)
+#         return Response(serializer.data)
     
+#     def put(self,request, pk):
+#         review = Review.objects.get(pk=pk)
+#         serializer = ReviewSerializer(review, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data)
+#         else:
+#             return Response(serializer.errors)
+        
+#     def delete(self,request, pk):
+#         review = Review.obejcts.get(pk=pk)
+#         review.delete()
+#         return Response("The review has been deleted", status=status.HTTP_204_NO_CONTENT)
+
+
+"""
+MovieListAPIView via API view
+"""
 # class MovieListAPIView(APIView):
     
 #     def get(self, request):
@@ -153,6 +193,9 @@ class ReviewDetailAV(APIView):
 #         else:
 #             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+"""
+MovieDetailAPIView via API view
+"""
 # class MovieDetailAPIView(APIView):
     
 #     def get(self, request, pk):
@@ -187,7 +230,9 @@ class ReviewDetailAV(APIView):
         
         
 
-
+"""
+Function Based Views
+"""
 # @api_view(['GET', 'POST'])
 # def movie_list(request):
     
