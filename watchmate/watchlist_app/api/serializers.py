@@ -12,7 +12,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         # fields = '__all__'
-        exclude = ('watchlist',)
+        exclude = ('watchlist', )
 
 class WatchListSerializer(serializers.ModelSerializer):
     len_name = serializers.SerializerMethodField()
@@ -41,16 +41,17 @@ class WatchListSerializer(serializers.ModelSerializer):
     #         raise serializers.ValidationError(f'The name of the movie {value} is too short')
     #     return value
 
-class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
-# class StreamPlatformSerializer(serializers.ModelSerializer):
-    len_name = serializers.SerializerMethodField()
+# class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
+class StreamPlatformSerializer(serializers.ModelSerializer):
+    # len_name = serializers.SerializerMethodField()
     
     """
     Below fields are nested serializer
     """
     # watchlist name same as related_name in WatchList models field platform
     watchlist = WatchListSerializer(many=True, read_only=True) 
-    url = serializers.HyperlinkedIdentityField(view_name='stream-list-detail',lookup_field='pk')
+    # url = serializers.HyperlinkedIdentityField(view_name='streamplatform',lookup_field='pk')
+    # url = serializers.HyperlinkedIdentityField(view_name='stream-list-detail',lookup_field='pk')
     # Will return the __str__ of the related field i.e from the WatchList model __str__
     # watchlist = serializers.StringRelatedField(many=True,read_only=True) 
     
@@ -61,8 +62,8 @@ class StreamPlatformSerializer(serializers.HyperlinkedModelSerializer):
         model = StreamPlatform  
         fields = '__all__'
     
-    def get_len_name(self,object): # get_(same same as above field len_name)
-        return len(object.name)
+    # def get_len_name(self,object): # get_(same same as above field len_name)
+    #     return len(object.name)
 
 
 # def validate_length(value):

@@ -1,15 +1,49 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework import generics
 from rest_framework import mixins
+from rest_framework import viewsets
 
 from watchlist_app.models import WatchList, StreamPlatform, Review
 from watchlist_app.api.serializers import WatchListSerializer, StreamPlatformSerializer, ReviewSerializer
 
+"""_
+Viewsets and Router
+"""
 
+class StreamPlatformViewSet(viewsets.ViewSet):
+    
+    def list(self, request):
+        queryset = StreamPlatform.objects.all()
+        serializer = StreamPlatformSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    def retrieve(self, request,pk=None):
+        queryset = StreamPlatform.objects.all()
+        stream = get_object_or_404(queryset, pk=pk)
+        serializer = StreamPlatformSerializer(stream)
+        return Response(serializer.data)
+    
+    def create(self,request):
+        serializer = StreamPlatformSerializer(data=request.data) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+    
+    def delete(self,request,pk):
+        stream = StreamPlatform.objects.get(pk=pk)
+        stream.delete()
+        return Response('Platform is deleted', status=status.HTTP_204_NO_CONTENT)
+        
 
+"""
+ CreateAPIView
+"""       
 class ReviewCreateAV(generics.CreateAPIView):
     
     serializer_class = ReviewSerializer
@@ -18,6 +52,7 @@ class ReviewCreateAV(generics.CreateAPIView):
         pk = self.kwargs.get('pk')
         watchlist = WatchList.objects.get(pk=pk)
         
+        # save the variable watchlist to the watchlist field
         serializer.save(watchlist=watchlist)
         
         
